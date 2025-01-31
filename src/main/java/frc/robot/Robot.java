@@ -5,8 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
@@ -18,7 +16,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
@@ -54,6 +51,7 @@ public class Robot extends TimedRobot {
   PneumaticsControlModule pH = new PneumaticsControlModule(1); 
 
   DoubleSolenoid shooter = pH.makeDoubleSolenoid(1,2);
+  @SuppressWarnings("unused")
   private static final Distance kLedSpacing = Meters.of(1 / 120.0);
   LEDPattern red = LEDPattern.solid(Color.kGreen);
   LEDPattern blue =  LEDPattern.solid(Color.kBlue);
@@ -77,6 +75,7 @@ public class Robot extends TimedRobot {
     // Set the data
     m_led.setData(m_ledBuffer);
     m_led.start();
+    @SuppressWarnings("unused")
     Distance ledSpacing = Meters.of(1 / 120.0);
     // Reuse buffer
     // Default to a length of 60, start empty output
@@ -100,6 +99,7 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
+  @SuppressWarnings("unlikely-arg-type")
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -122,8 +122,7 @@ public class Robot extends TimedRobot {
     // Optionally, add code here to physically change the LED color on your robot
 }
   /** This function is called once each time the robot enters Disabled mode. */
-  @SuppressWarnings("unlikely-arg-type")
-  @Override
+   @Override
   public void disabledInit() {
   
   }
