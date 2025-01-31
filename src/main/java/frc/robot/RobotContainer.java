@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * su bsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
  private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -111,6 +111,99 @@ public class RobotContainer {
   }
 
   /**
+    new Trigger(m_exampleSubsystem::exampleCondition)
+        .onTrue(new ExampleCommand(m_exampleSubsystem));
+
+        m_driverController.button(17).whileTrue( //True lazy button
+          drivebase.driveToPose(//Coral side 1
+          new Pose2d(new Translation2d(Meter.of(3.4),Meter.of(5.1)), Rotation2d.fromDegrees(-50)))
+        .andThen(
+          drivebase.driveToPose(//Human Player station
+          new Pose2d(new Translation2d(Meter.of(1),Meter.of(7)), Rotation2d.fromDegrees(130)))
+        ).andThen(
+          drivebase.driveToPose(//Set point
+          new Pose2d(new Translation2d(Meter.of(4.3), Meter.of(6.3)), Rotation2d.fromDegrees(-50)))
+        ).andThen(
+          drivebase.driveToPose( //Coral side 2
+          new Pose2d(new Translation2d(Meter.of(5.2), Meter.of(5.2)), Rotation2d.fromDegrees(-120)))
+         ).andThen(
+          drivebase.driveToPose(//Set point
+          new Pose2d(new Translation2d(Meter.of(4.3), Meter.of(6.3)), Rotation2d.fromDegrees(130)))
+        ).andThen(
+          drivebase.driveToPose(//Human Player station
+          new Pose2d(new Translation2d(Meter.of(1), Meter.of(7)), Rotation2d.fromDegrees(130)))
+        ).andThen (
+          drivebase.driveToPose(//Set point
+          new Pose2d(new Translation2d(Meter.of(6.5), Meter.of(5.6)), Rotation2d.fromDegrees(130)))
+        ).andThen(//Coral side 3
+          drivebase.driveToPose(new Pose2d(new Translation2d(Meter.of(6.1), Meter.of(4)), Rotation2d.fromDegrees(180)))
+        )
+
+        );
+
+        m_driverController.button(10).whileTrue(drivebase.sysIdDriveMotorCommand());
+        m_driverController.button(9).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(3),
+                                                                                Meter.of(4)),
+                                                                          Rotation2d.fromDegrees(-180))));  
+                                                                                              
+        m_driverController.button(8).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(5),
+                                                                                Meter.of(3)),
+                                                                        Rotation2d.fromDegrees(0))));
+                                                                        
+         m_driverController.button(7).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                        (Meter.of(3.5),
+                                                                        Meter.of(2.5)),
+                                                                Rotation2d.fromDegrees(125))));
+
+        m_driverController.button(6).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(5),
+                                                                                Meter.of(3)),
+                                                                        Rotation2d.fromDegrees(-50))));
+
+         m_driverController.button(5).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                        (Meter.of(6.1),
+                                                                        Meter.of(4)),
+                                                                Rotation2d.fromDegrees(180))));
+
+        m_driverController.button(4).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(5.2),
+                                                                                Meter.of(5.2)),
+                                                                        Rotation2d.fromDegrees(-120))));
+
+
+        m_driverController.button(3).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(3.3),
+                                                                                Meter.of(5.3)),
+                                                                        Rotation2d.fromDegrees(-50))));
+        //Processor
+        m_driverController.button(2).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(11.5),
+                                                                                Meter.of(7.5)),
+                                                                        Rotation2d.fromDegrees(90))));  
+        //Human Playerstation                                                                                
+        m_driverController.button(1).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                                (Meter.of(1),
+                                                                                Meter.of(7)),
+                                                                          Rotation2d.fromDegrees(130))));  
+                                                                                
+            // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+            // cancelling on release.
+
+            
+            m_driverController.button(11).whileTrue(elevator.setGoal(3));
+            m_driverController.button(12).whileTrue(elevator.setGoal(6));
+            m_driverController.button(13).whileTrue(elevator.setGoal(9));
+            m_driverController.button(14).whileTrue(arm.setGoal(45));
+            m_driverController.button(15).whileTrue(arm.setGoal(90));
+            m_driverController.button(16).whileTrue(setElevArm(10, 70));
+            elevator.atHeight(5, 0.1).whileTrue(Commands.print("I AM ALIVE, YAAA HAAAAA"));
+        
+          }
+        
+        
+          /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
@@ -120,4 +213,9 @@ public class RobotContainer {
     return autoChooser.getSelected();
 
   }
-}
+
+
+ }
+
+
+

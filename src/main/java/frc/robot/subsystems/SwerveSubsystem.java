@@ -18,6 +18,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -31,6 +32,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.Meter;
@@ -47,8 +49,8 @@ public class SwerveSubsystem extends SubsystemBase {
         try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.maxSpeed,
-                                                                  new Pose2d(new Translation2d(Meter.of(1),
-                                                                                               Meter.of(4)),
+                                                                  new Pose2d(new Translation2d(Meter.of(7.5),
+                                                                                               Meter.of(7)),
                                                                              Rotation2d.fromDegrees(0)));
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
@@ -157,7 +159,7 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent())
             {
-              return alliance.get() == DriverStation.Alliance.Red;
+              return alliance.get() == DriverStation.Alliance.Blue;
             }
             return false;
           },
@@ -183,7 +185,7 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return new PathPlannerAuto(pathName);
   }
-  
+
   public SysIdRoutine setDriveSysIdRoutine(
       Config config, SubsystemBase swerveSubsystem, SwerveDrive swerveDrive, double maxVolts) {
     return new SysIdRoutine(
@@ -211,6 +213,46 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
 
 
     
+
+
+  
+  public Command sysIdDriveMotorCommand()
+  {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setDriveSysIdRoutine(
+            new Config(),
+            this, swerveDrive, 12,true),
+        3.0, 5.0, 3.0);
+  }
+
+
+public Command driveToPose(Pose2d pose)
+  {
+// Create the constraints to use while pathfinding
+    PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                     );
+  }
+
+
+
+
+     /**
+   * Drive with {@link SwerveSetpointGenerator} from 254, implemented by PathPlanner.
+   *
+   * @param robotRelativeChassisSpeed Robot relative {@link ChassisSpeeds} to achieve.
+   * @return {@link Command} to run.
+   * @throws IOException    If the PathPlanner GUI settings is invalid
+   * @throws ParseException If PathPlanner GUI settings is nonexistent.
+   */
+
 
 
 
