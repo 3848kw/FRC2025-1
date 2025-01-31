@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -17,7 +16,9 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double DEADBAND = 0.05;
+    public static final double DEADBAND = .05;
   }
-  public static final double maxSpeed = 4.5;
+  public static double maxSpeed = 4.5;
+
+
 }
