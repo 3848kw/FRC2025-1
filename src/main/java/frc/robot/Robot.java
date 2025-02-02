@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj. enoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
       Compressor c = new Compressor(1, PneumaticsModuleType.CTREPCM);
   PneumaticsControlModule pH = new PneumaticsControlModule(1); 
 
-  DoubleSolenoid shooter = pH.makeDoubleSolenoid(1,2);
+  DoubleSolenoid shooter = pH.makeDoubleSolenoid(0,1);
   @SuppressWarnings("unused")
   private static final Distance kLedSpacing = Meters.of(1 / 120.0);
   LEDPattern red = LEDPattern.solid(Color.kGreen);
@@ -109,16 +109,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Sensor 1 Range", ultrasonicSensorOneRange);
         voltageScaleFactor = 5/RobotController.getVoltage5V();    // Update the buffer with the rainbow animation
-        if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
-          blue.applyTo(m_ledBuffer);
-          m_led.setData(m_ledBuffer);
-        } else {
-          red.applyTo(m_ledBuffer);
-          m_led.setData(m_ledBuffer);
-        }
-  }
-  public void setLEDColor(String color) {
-    SmartDashboard.putString("LED Color", color); // Send color to dashboard
+       
+; // Send color to dashboard
     // Optionally, add code here to physically change the LED color on your robot
 }
   /** This function is called once each time the robot enters Disabled mode. */
@@ -147,10 +139,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() { 
+     if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
+          blue.applyTo(m_ledBuffer);
+          m_led.setData(m_ledBuffer);
+        } else {
+          red.applyTo(m_ledBuffer);
+          m_led.setData(m_ledBuffer);
+        }
+  }
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+  
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -159,6 +160,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {  
+      if (stick.getRawButton(1))
+    {
+      shooter.set(Value.kForward);
+    
+    }
+   if (stick.getRawButton(2)) {
+      shooter.set(Value.kReverse);
+    }
     if (m_stick.getRawButton(3) & ultrasonicSensorOneRange >= 17) { 
       thingy.set(.2);
     } else { 
