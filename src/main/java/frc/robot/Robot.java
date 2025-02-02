@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj. enoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Joystick m_stick;
   private Joystick stick;
-  public static String color = "need update";
+ 
    public DigitalOutput ultrasonicTriggerPinOne = new DigitalOutput(0);
   private final RobotContainer m_robotContainer;
   public AnalogInput ultrasonicSensorOne = new AnalogInput(0);
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */ public void robotInit() {
-
+  
      m_stick = new Joystick(1);
      stick = new Joystick(0);}
     //Initialize range readings on SmartDashboard as max distance in Centimeters.
@@ -102,6 +102,7 @@ public class Robot extends TimedRobot {
   @SuppressWarnings("unlikely-arg-type")
   @Override
   public void robotPeriodic() {
+ 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -139,14 +140,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() { 
-     if (DriverStation.getAlliance().equals(DriverStation.Alliance.Blue)) {
-          blue.applyTo(m_ledBuffer);
-          m_led.setData(m_ledBuffer);
-        } else {
-          red.applyTo(m_ledBuffer);
-          m_led.setData(m_ledBuffer);
-        }
-  }
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -159,13 +153,20 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {  
-      if (stick.getRawButton(1))
+  public void teleopPeriodic() { 
+    if (m_stick.getRawButton(7)) {
+      blue.applyTo(m_ledBuffer);
+      m_led.setData(m_ledBuffer);
+    }  if (m_stick.getRawButton(8)) {
+      red.applyTo(m_ledBuffer);
+      m_led.setData(m_ledBuffer);}
+    
+      if (m_stick.getRawButton(11))
     {
       shooter.set(Value.kForward);
     
     }
-   if (stick.getRawButton(2)) {
+   if (m_stick.getRawButton(12)) {
       shooter.set(Value.kReverse);
     }
     if (m_stick.getRawButton(3) & ultrasonicSensorOneRange >= 17) { 
