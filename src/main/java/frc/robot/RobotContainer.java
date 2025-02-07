@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.subsystems.climber;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -27,7 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
  private SendableChooser<Command> autoChooser = new SendableChooser<>();
-   
+ private final climber climber = new climber();
+
    // The robot's subsystems and commands are defined here...
    private final SwerveSubsystem drivebase = new SwerveSubsystem();
    // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -105,7 +107,9 @@ public class RobotContainer {
     
 
         m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-     
+        m_driverController.leftBumper().onTrue(Commands.run(climber::climb));
+        m_driverController.rightBumper().onTrue(Commands.run(climber::release));
+
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
   }
@@ -191,31 +195,28 @@ public class RobotContainer {
             // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
             // cancelling on release.
 
-            
-            m_driverController.button(11).whileTrue(elevator.setGoal(3));
-            m_driverController.button(12).whileTrue(elevator.setGoal(6));
-            m_driverController.button(13).whileTrue(elevator.setGoal(9));
-            m_driverController.button(14).whileTrue(arm.setGoal(45));
-            m_driverController.button(15).whileTrue(arm.setGoal(90));
-            m_driverController.button(16).whileTrue(setElevArm(10, 70));
-            elevator.atHeight(5, 0.1).whileTrue(Commands.print("I AM ALIVE, YAAA HAAAAA"));
+                  */
+         
+         
         
-          }
+          
         
-        
-          /**
+   /* 
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
-   */
+  */
+
+
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
     return autoChooser.getSelected();
+  }
+
 
   }
 
 
- }
+ 
 
 
 

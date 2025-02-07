@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
@@ -26,7 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj.DriverStation;
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -38,7 +36,7 @@ public class Robot extends TimedRobot {
   private final AddressableLEDBuffer m_ledBuffer;
   private Command m_autonomousCommand;
   private Joystick m_stick;
-  private Joystick stick;
+  
  
    public DigitalOutput ultrasonicTriggerPinOne = new DigitalOutput(0);
   private final RobotContainer m_robotContainer;
@@ -47,10 +45,8 @@ public class Robot extends TimedRobot {
   public double voltageScaleFactor = 1;
   public double mult = 0.0492;
   private SparkMax thingy = new SparkMax(16, MotorType.kBrushless);
-      Compressor c = new Compressor(1, PneumaticsModuleType.CTREPCM);
-  PneumaticsControlModule pH = new PneumaticsControlModule(1); 
+      
 
-  DoubleSolenoid shooter = pH.makeDoubleSolenoid(0,1);
   @SuppressWarnings("unused")
   private static final Distance kLedSpacing = Meters.of(1 / 120.0);
   LEDPattern red = LEDPattern.solid(Color.kGreen);
@@ -60,8 +56,7 @@ public class Robot extends TimedRobot {
    * initialization code.
    */ public void robotInit() {
   
-     m_stick = new Joystick(1);
-     stick = new Joystick(0);}
+     m_stick = new Joystick(1);}
     //Initialize range readings on SmartDashboard as max distance in Centimeters.
   public Robot() {
     m_led = new AddressableLED(8);
@@ -75,12 +70,7 @@ public class Robot extends TimedRobot {
     // Set the data
     m_led.setData(m_ledBuffer);
     m_led.start();
-    @SuppressWarnings("unused")
-    Distance ledSpacing = Meters.of(1 / 120.0);
-    // Reuse buffer
-    // Default to a length of 60, start empty output
-    // Length is expensive to set, so only set it once, then just update data
- 
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -99,7 +89,6 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
-  @SuppressWarnings("unlikely-arg-type")
   @Override
   public void robotPeriodic() {
  
@@ -154,47 +143,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() { 
-    if (m_stick.getRawButton(7)) {
-      blue.applyTo(m_ledBuffer);
-      m_led.setData(m_ledBuffer);
-    }  if (m_stick.getRawButton(8)) {
-      red.applyTo(m_ledBuffer);
-      m_led.setData(m_ledBuffer);}
     
-      if (m_stick.getRawButton(11))
-    {
-      shooter.set(Value.kForward);
-    
-    }
-   if (m_stick.getRawButton(12)) {
-      shooter.set(Value.kReverse);
-    }
-    if (m_stick.getRawButton(3) & ultrasonicSensorOneRange >= 17) { 
-      thingy.set(.2);
-    } else { 
-      thingy.set(0);
-    }
-    ultrasonicSensorOneRange = ultrasonicSensorOne.getValue() * voltageScaleFactor * mult;
-    
-    if (m_stick.getRawButton(4)) { 
-      thingy.set(1);
-    }
-    
-    if (m_stick.getRawButton(11)) { 
-      mult = 0;
-    }
-    
-    if (m_stick.getRawButton(12)) { 
-      mult = 0.0492;
-    }
-    if (stick.getRawButton(1))
-    {
-      shooter.set(Value.kForward);
-    
-    }
-    if (stick.getRawButton(2)) {
-      shooter.set(Value.kReverse);
-    }
+    corral();
+    LEDs();
   }
   
 
@@ -208,6 +159,50 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+// this is the climber
+
+
+
+ private void corral() {
+    ultrasonicSensorOneRange = ultrasonicSensorOne.getValue() * voltageScaleFactor * mult;
+
+    if (m_stick.getRawButton(3) && ultrasonicSensorOneRange >= 17) 
+    {
+      thingy.set(0.2);
+    } else 
+    {
+      thingy.set(0);
+    }
+
+    if (m_stick.getRawButton(4)) 
+    {
+      thingy.set(1);
+    }
+
+    if (m_stick.getRawButton(11)) 
+    {
+      mult = 0;
+    }
+
+    if (m_stick.getRawButton(12)) 
+    {
+      mult = 0.0492;
+    }
+  }
+
+  private void LEDs() {
+    if (m_stick.getRawButton(7)) 
+    {
+      blue.applyTo(m_ledBuffer);
+      m_led.setData(m_ledBuffer);
+    }  
+    if (m_stick.getRawButton(8)) 
+    {
+      red.applyTo(m_ledBuffer);
+      m_led.setData(m_ledBuffer);
+    }
+  }
+
 
   /** This function is called once when the robot is first started up. */
   @Override
