@@ -5,14 +5,16 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.climber;
+import frc.robot.subsystems.corral;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -27,15 +30,19 @@ import frc.robot.subsystems.climber;
  * su bsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
  private SendableChooser<Command> autoChooser = new SendableChooser<>();
  private final climber climber = new climber();
+ private final LED led = new LED();
+ private final corral corral = new corral();
 
    // The robot's subsystems and commands are defined here...
    private final SwerveSubsystem drivebase = new SwerveSubsystem();
    // Replace with CommandPS4Controller or CommandJoystick if needed
    private final CommandXboxController m_driverController =
        new CommandXboxController(OperatorConstants.kDriverControllerPort);
- 
+       private final CommandXboxController m_opperatorController =
+       new CommandXboxController(OperatorConstants.kopControllerPort);
    /** The container for the robot. Contains subsystems, OI devices, and commands. */
    public RobotContainer() {
      
@@ -109,10 +116,15 @@ public class RobotContainer {
         m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
         m_driverController.leftBumper().onTrue(Commands.run(climber::climb));
         m_driverController.rightBumper().onTrue(Commands.run(climber::release));
-
+        m_opperatorController.button(1).onTrue(Commands.run(corral::intake));
+        m_opperatorController.button(2).onTrue(Commands.run(corral::outtake));
+        m_opperatorController.button(3).onTrue(Commands.run(corral::override));
+        m_opperatorController.button(4).onTrue(Commands.run(corral::renable));
+        m_driverController.y().onTrue(Commands.run(led::red));
+        m_driverController.x().onTrue(Commands.run(led::blue));
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-  }
+  } 
 
   /**
     new Trigger(m_exampleSubsystem::exampleCondition)

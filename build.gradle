@@ -51,7 +51,12 @@ def includeDesktopSupport = true
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
+repositories {
+    mavenCentral()
+}
+
 dependencies {
+    implementation 'com.studica.frc:Studica-java:2025.1.1-beta-3'
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
