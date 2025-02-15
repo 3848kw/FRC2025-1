@@ -114,13 +114,13 @@ public class RobotContainer {
     
 
         m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-        m_driverController.leftBumper().onTrue(Commands.run(climber::climb));
-        m_driverController.rightBumper().onTrue(Commands.run(climber::release));
+        m_driverController.button(1).onTrue(Commands.run(climber::climb));
+        m_driverController.button(2).onTrue(Commands.run(climber::release));
         m_opperatorController.button(1).onTrue(Commands.run(corral::intake));
         m_opperatorController.button(2).onTrue(Commands.run(corral::outtake));
         m_opperatorController.button(3).onTrue(Commands.run(corral::override));
         m_opperatorController.button(4).onTrue(Commands.run(corral::renable));
-        m_driverController.y().onTrue(Commands.run(led::red));
+       // m_driverController.y().onTrue(Commands.run(led::red));
         m_driverController.x().onTrue(Commands.run(led::blue));
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

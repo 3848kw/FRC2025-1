@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** A hatch mechanism actuated by a single {@link DoubleSolenoid}. */
 public class climber extends SubsystemBase {
-  //private final Compressor m_compressor = new Compressor(1,PneumaticsModuleType.CTREPCM);
+  private final Compressor m_compressor = new Compressor(1,PneumaticsModuleType.CTREPCM);
 
   private final DoubleSolenoid m_hatchSolenoid =
       new DoubleSolenoid(

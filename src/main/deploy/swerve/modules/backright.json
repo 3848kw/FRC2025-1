@@ -15,12 +15,12 @@
     "canbus": "canivore"
   },
   "inverted": {
-    "drive": true,
+    "drive": false,
     "angle": false
   },
-  "absoluteEncoderOffset": 312.0,
+  "absoluteEncoderOffset": 225,
   "location": {
     "front": -12,
-    "left": -12
+    "left": 12
   }
 }
