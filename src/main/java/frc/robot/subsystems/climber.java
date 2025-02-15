@@ -9,14 +9,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** A hatch mechanism actuated by a single {@link DoubleSolenoid}. */
 public class climber extends SubsystemBase {
-  @SuppressWarnings("unused")
-  private final Compressor m_compressor = new Compressor(1,PneumaticsModuleType.CTREPCM);
-
   private final DoubleSolenoid m_hatchSolenoid =
-      new DoubleSolenoid(
-          PneumaticsModuleType.CTREPCM,
-          0,
-          1);
+  new DoubleSolenoid(2,
+      PneumaticsModuleType.CTREPCM,
+      0,
+      1);
+  @SuppressWarnings("unused")
+  private final Compressor m_compressor = new Compressor(2,PneumaticsModuleType.CTREPCM);
+
+ 
 
   /** Grabs the hatch. */
   public void climb() {
