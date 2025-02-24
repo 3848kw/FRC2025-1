@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.climber;
 import frc.robot.subsystems.corral;
+import frc.robot.subsystems.ElevatorSubsystem;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -33,17 +35,20 @@ public class RobotContainer {
  private final climber climber = new climber();
  private final LED led = new LED();
  private final corral corral = new corral();
+ private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
    // The robot's subsystems and commands are defined here...
    private final SwerveSubsystem drivebase = new SwerveSubsystem();
    // Replace with CommandPS4Controller or CommandJoystick if needed
    private final CommandXboxController m_driverController =
        new CommandXboxController(OperatorConstants.kDriverControllerPort);
-       private final CommandXboxController m_opperatorController =
-       new CommandXboxController(OperatorConstants.kopControllerPort);
+       private final edu.wpi.first.wpilibj2.command.button.CommandJoystick CommandJoystick =
+       new edu.wpi.first.wpilibj2.command.button.CommandJoystick(1);
    /** The container for the robot. Contains subsystems, OI devices, and commands. */
    public RobotContainer() {
-     
+    NamedCommands.registerCommand("climb", climber.up());
+    NamedCommands.registerCommand("fall", climber.down());
+
      // Configure the trigger bindings
      DriverStation.silenceJoystickConnectionWarning(true);
      configureBindings();
@@ -56,6 +61,7 @@ public class RobotContainer {
   // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
   SmartDashboard.putData("Auto Chooser", autoChooser);
+
 }
 // The real world (whats that?)
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -107,19 +113,25 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  
+  
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    
+    m_driverController.button(1).whileTrue(elevator.setGoal(300));
+    m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    m_driverController.leftBumper().onTrue(Commands.runOnce(climber::climb));
+    m_driverController.rightBumper().onTrue(Commands.runOnce(climber::release));
+    CommandJoystick.button(9).whileTrue(elevator.setGoal(1));//l1
+    CommandJoystick.button(10).whileTrue(elevator.setGoal(0));//l2
+    CommandJoystick.button(11).whileTrue(elevator.setGoal(5));//l3
+    CommandJoystick.button(12).whileTrue(elevator.setGoal(5));//l4
+    CommandJoystick.button(5).whileTrue(elevator.setGoal(5));//hp
 
-        m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-        m_driverController.leftBumper().onTrue(Commands.runOnce(climber::climb));
-        m_driverController.rightBumper().onTrue(Commands.runOnce(climber::release));
-        m_opperatorController.button(1).onTrue(Commands.runOnce(corral::intake));
-        m_opperatorController.button(2).onTrue(Commands.runOnce(corral::outtake));
-        m_opperatorController.button(3).onTrue(Commands.runOnce(corral::override));
-        m_opperatorController.button(4).onTrue(Commands.runOnce(corral::renable));
+     CommandJoystick.button(3).onTrue(Commands.run(corral::intake));
+     m_driverController.button(5).onTrue(Commands.runOnce(corral::outtake));
+
        // m_driverController.y().onTrue(Commands.run(led::red));
-        m_driverController.x().onTrue(Commands.runOnce(led::blue));
+
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
   } 
