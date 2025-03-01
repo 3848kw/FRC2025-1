@@ -117,18 +117,19 @@ public class RobotContainer {
   
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    m_driverController.button(1).whileTrue(elevator.setGoal(300));
     m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    m_driverController.leftBumper().onTrue(Commands.runOnce(climber::climb));
-    m_driverController.rightBumper().onTrue(Commands.runOnce(climber::release));
-    CommandJoystick.button(9).whileTrue(elevator.setGoal(1));//l1
-    CommandJoystick.button(10).whileTrue(elevator.setGoal(0));//l2
-    CommandJoystick.button(11).whileTrue(elevator.setGoal(5));//l3
-    CommandJoystick.button(12).whileTrue(elevator.setGoal(5));//l4
-    CommandJoystick.button(5).whileTrue(elevator.setGoal(5));//hp
+    CommandJoystick.button(4).onTrue(Commands.runOnce(climber::climb));
+    CommandJoystick.button(3).onTrue(Commands.runOnce(climber::release));
 
-     CommandJoystick.button(3).onTrue(Commands.run(corral::intake));
-     m_driverController.button(5).onTrue(Commands.runOnce(corral::outtake));
+    CommandJoystick.button(3).whileTrue(elevator.setGoal(100));//l1
+    CommandJoystick.button(6).whileTrue(elevator.setGoal(200));//l2
+    CommandJoystick.button(7).whileTrue(elevator.setGoal(400));//l3
+    CommandJoystick.button(2).whileTrue(elevator.setGoal(0));//hp/floor
+    CommandJoystick.button(5).whileTrue(elevator.runOnce(elevator::manualup));
+    CommandJoystick.button(1).whileTrue(elevator.runOnce(elevator::manualdown));
+
+     CommandJoystick.button(3).whileTrue(Commands.run(corral::intake));
+     CommandJoystick.button(8).onTrue(Commands.runOnce(corral::outtake));
 
        // m_driverController.y().onTrue(Commands.run(led::red));
 

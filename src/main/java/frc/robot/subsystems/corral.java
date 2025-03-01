@@ -25,28 +25,26 @@ public class corral extends SubsystemBase {
     Joystick exampleJoystick = new Joystick(1); // 0 is the USB Port to be used as indicated on the Driver Station
 
   private SparkMax thingy = new SparkMax(16, MotorType.kBrushless);
-  
+  public double stop = 17;
   @Override
   public void periodic() {
       ultrasonicSensorOneRange = ultrasonicSensorOne.getValue() * voltageScaleFactor * mult;
        SmartDashboard.putNumber("Sensor 1 Range", ultrasonicSensorOneRange);
         voltageScaleFactor = 5/RobotController.getVoltage5V();  
-        SmartDashboard.putBoolean("Limit Switch", limitSwitch.get());
 
   }
   public void intake() {
    
-      thingy.set(0);
+      
       
      
-    if (limitSwitch.get())
+    if (ultrasonicSensorOneRange > stop)
     {
       thingy.set(0.2);
     }
-  if (exampleJoystick.getRawButton(4))
-  {
-    thingy.set(-1);
-  }
+    else  {
+      thingy.set(0);
+    }
   }
   
   

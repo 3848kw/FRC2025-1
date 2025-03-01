@@ -186,26 +186,11 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
     return new PathPlannerAuto(pathName);
   }
 
-  public SysIdRoutine setDriveSysIdRoutine(
-      Config config, SubsystemBase swerveSubsystem, SwerveDrive swerveDrive, double maxVolts) {
-    return new SysIdRoutine(
-        config,
-        new SysIdRoutine.Mechanism(
-            (Voltage voltage) -> {
-              SwerveDriveTest.angleModules(swerveDrive, Rotation2d.fromDegrees( 45));
-              SwerveDriveTest.powerDriveMotorsVoltage(
-                  swerveDrive, Math.min(voltage.in(Volts), maxVolts));
-            },
-            log -> {
-              for (SwerveModule module : swerveDrive.getModules()) {
-                SwerveDriveTest.logDriveMotorVoltage(module, log);
-              }
-            },
-            this));
-  }
+
   public void zeroGyro()
   {
     swerveDrive.zeroGyro();
+    
   }
 
   
@@ -215,15 +200,7 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
     
 
 
-  
-  public Command sysIdDriveMotorCommand()
-  {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setDriveSysIdRoutine(
-            new Config(),
-            this, swerveDrive, 12,true),
-        3.0, 5.0, 3.0);
-  }
+
 
 
 public Command driveToPose(Pose2d pose)

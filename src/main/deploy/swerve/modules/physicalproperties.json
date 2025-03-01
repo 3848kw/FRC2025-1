@@ -6,9 +6,9 @@
    
   },
   "currentLimit": {
-    "drive": 40,
+    "drive": 60,
 
-    "angle": 40
+    "angle": 60
   },
   "rampRate": {
     "drive": 0.25,

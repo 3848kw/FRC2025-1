@@ -122,6 +122,14 @@ public class ElevatorSubsystem extends SubsystemBase
   {
     return run(() -> reachGoal(goal));
   }
+  public void manualdown()
+  {
+    m_motor.set(-1);
+  }
+  public void manualup()
+  {
+    m_motor.set(1);
+  }
 
   /**
    * Stop the control loop and motor output.

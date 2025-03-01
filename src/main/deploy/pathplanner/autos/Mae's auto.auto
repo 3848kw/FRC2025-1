@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New Path"
+            "pathName": "start w coral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "reef to source "
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source to reef "
           }
         }
       ]
