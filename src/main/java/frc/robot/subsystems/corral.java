@@ -22,7 +22,6 @@ public class corral extends SubsystemBase {
   public double mult = 0.0492;
     DigitalInput limitSwitch = new DigitalInput(0);
     DigitalInput Switch = new DigitalInput(1);
-    Joystick exampleJoystick = new Joystick(1); // 0 is the USB Port to be used as indicated on the Driver Station
 
   private SparkMax thingy = new SparkMax(16, MotorType.kBrushless);
   public double stop = 17;
@@ -52,9 +51,15 @@ public class corral extends SubsystemBase {
   {
   thingy.set(1);
   }
-
-  public void renable()
-  {
-  
+ public Command in() {
+    // implicitly require `this`
+    intake();;
+        return this.run(() -> intake());
   }
+  public Command out() {
+    // implicitly require `this`
+        return this.run(() -> {
+            thingy.set(1);
+        });}
+
   }

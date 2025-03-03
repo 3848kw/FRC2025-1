@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.climber;
@@ -33,7 +32,7 @@ public class RobotContainer {
 
  private SendableChooser<Command> autoChooser = new SendableChooser<>();
  private final climber climber = new climber();
- private final LED led = new LED();
+private final LED led = new LED();
  private final corral corral = new corral();
  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
@@ -46,19 +45,21 @@ public class RobotContainer {
        new edu.wpi.first.wpilibj2.command.button.CommandJoystick(1);
    /** The container for the robot. Contains subsystems, OI devices, and commands. */
    public RobotContainer() {
-    NamedCommands.registerCommand("climb", climber.up());
-    NamedCommands.registerCommand("fall", climber.down());
-
+  
      // Configure the trigger bindings
      DriverStation.silenceJoystickConnectionWarning(true);
      configureBindings();
      drivebase.setDefaultCommand(!RobotBase.isSimulation() ? driveFieldOrientedAngularVelocity : driveFieldOrientedDirectAngleSim);
      NamedCommands.registerCommand("test", Commands.print("Hello World"));
-   
+     NamedCommands.registerCommand("climb", climber.up());
+     NamedCommands.registerCommand("fall", climber.down());
+     NamedCommands.registerCommand("intake", corral.in());
+     NamedCommands.registerCommand("intake", corral.out());
    autoChooser = AutoBuilder.buildAutoChooser();
 
+
   // Another option that allows you to specify the default auto by its name
-  // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+  // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");     
 
   SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -70,7 +71,7 @@ public class RobotContainer {
                                                                 .withControllerRotationAxis(m_driverController::getRightX)
                                                                 .deadband(OperatorConstants.DEADBAND)
                                                                 .scaleTranslation(0.8)
-                                                                .allianceRelativeControl(true);
+                                                                .allianceRelativeControl(true);          ;
 
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX,
                                                                                              m_driverController::getRightY)
@@ -130,7 +131,6 @@ public class RobotContainer {
 
      CommandJoystick.button(3).whileTrue(Commands.run(corral::intake));
      CommandJoystick.button(8).onTrue(Commands.runOnce(corral::outtake));
-
        // m_driverController.y().onTrue(Commands.run(led::red));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
