@@ -12,6 +12,7 @@ import swervelib.SwerveInputStream;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -62,7 +63,6 @@ private final LED led = new LED();
   // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");     
 
   SmartDashboard.putData("Auto Chooser", autoChooser);
-
 }
 // The real world (whats that?)
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -121,16 +121,19 @@ private final LED led = new LED();
     m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
     CommandJoystick.button(4).onTrue(Commands.runOnce(climber::climb));
     CommandJoystick.button(3).onTrue(Commands.runOnce(climber::release));
+    CommandJoystick.button(2).whileTrue(elevator.setGoal(-20));
+    CommandJoystick.button(3).whileTrue(elevator.setGoal(-40));
+    CommandJoystick.button(6).whileTrue(elevator.setGoal(0));
+    
+    CommandJoystick.button(1).whileTrue(Commands.runOnce(elevator::homeElevator));
 
-    CommandJoystick.button(3).whileTrue(elevator.setGoal(100));//l1
-    CommandJoystick.button(6).whileTrue(elevator.setGoal(200));//l2
-    CommandJoystick.button(7).whileTrue(elevator.setGoal(400));//l3
-    CommandJoystick.button(2).whileTrue(elevator.setGoal(0));//hp/floor
-    CommandJoystick.button(5).whileTrue(elevator.runOnce(elevator::manualup));
-    CommandJoystick.button(1).whileTrue(elevator.runOnce(elevator::manualdown));
+    CommandJoystick.button(9).onFalse(Commands.runOnce(corral::stop));
+    CommandJoystick.button(2).onTrue(Commands.runOnce(() -> elevator.reachGoal(20)));  // Moves to 20 meters while button 2 is held
+     CommandJoystick.button(9).whileTrue(Commands.run(corral::intake));
+     CommandJoystick.button(8).whileTrue(Commands.runOnce(corral::outtake));
 
-     CommandJoystick.button(3).whileTrue(Commands.run(corral::intake));
-     CommandJoystick.button(8).onTrue(Commands.runOnce(corral::outtake));
+
+
        // m_driverController.y().onTrue(Commands.run(led::red));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,

@@ -1,65 +1,59 @@
 package frc.robot.subsystems;
 
-
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-/** A hatch mechanism actuated by a single {@link DoubleSolenoid}. */
 public class corral extends SubsystemBase {
+    
+    private SparkMax thingy = new SparkMax(16, MotorType.kBrushless);  // Motor (thingy)
+    DigitalInput toplimitSwitch = new DigitalInput(0);
+        
+  
+    @Override
+    public void periodic() {
+        // Update the ultrasonic sensor's distance
+      SmartDashboard.putBoolean("BOB?", toplimitSwitch.get());
+        
+        // Rounded distance for display purposes
 
-  public AnalogInput ultrasonicSensorOne = new AnalogInput(3);
-  public double ultrasonicSensorOneRange = 0;
-  public double voltageScaleFactor = 1;
-  public double mult = 0.0492;
-    DigitalInput limitSwitch = new DigitalInput(0);
-    DigitalInput Switch = new DigitalInput(1);
 
-  private SparkMax thingy = new SparkMax(16, MotorType.kBrushless);
-  public double stop = 17;
-  @Override
-  public void periodic() {
-      ultrasonicSensorOneRange = ultrasonicSensorOne.getValue() * voltageScaleFactor * mult;
-       SmartDashboard.putNumber("Sensor 1 Range", ultrasonicSensorOneRange);
-        voltageScaleFactor = 5/RobotController.getVoltage5V();  
-
-  }
-  public void intake() {
-   
-      
-      
-     
-    if (ultrasonicSensorOneRange > stop)
-    {
-      thingy.set(0.2);
     }
-    else  {
-      thingy.set(0);
+  
+    // Intake function that checks for obstruction before running the motor
+    public void intake() {
+        // If the sensor detects something too close OR the sensor is out of the acceptable range, stop the motor
+        if (toplimitSwitch.get()) {
+            thingy.set(0);  // Stop the motor
+        } else {
+            thingy.set(.6);  // Run motor at 0.2 speed if no obstruction and within range
+        }
+    }
+  
+    // Outtake function (motor runs at full speed)
+    public void outtake() {
+        thingy.set(-.23);  // Run the motor at full speed
+    }
+  
+    // Stop the motor immediately
+    public void stop() {
+        thingy.set(0);
+    }
+  
+    // Command for intake (can be called by a button press or other event)
+    public Command in() {
+        return this.run(() -> intake());  // Run the intake method with obstruction checking
+    }
+  
+    // Command for outtake (can be called by a button press or other event)
+    public Command out() {
+        return this.run(() -> thingy.set(1));  // Full speed outtake
     }
   }
   
-  
-  public void outtake()
-  {
-  thingy.set(1);
-  }
- public Command in() {
-    // implicitly require `this`
-    intake();;
-        return this.run(() -> intake());
-  }
-  public Command out() {
-    // implicitly require `this`
-        return this.run(() -> {
-            thingy.set(1);
-        });}
-
-  }
