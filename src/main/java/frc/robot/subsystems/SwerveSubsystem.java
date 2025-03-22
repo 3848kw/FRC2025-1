@@ -24,6 +24,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveDrive;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -35,9 +36,10 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
   File directory = new File(Filesystem.getDeployDirectory(),"swerve");
-  SwerveDrive  swerveDrive;
+  static SwerveDrive  swerveDrive;
 
   public SwerveSubsystem() {
+    
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try
     {
@@ -79,8 +81,12 @@ public class SwerveSubsystem extends SubsystemBase {
     return false;
   }
 
+
+  
+
   @Override
   public void periodic() {
+    swerveDrive.updateOdometry();
     // This method will be called once per scheduler run
   }
 
@@ -153,7 +159,7 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent())
             {
-              return alliance.get() == DriverStation.Alliance.Blue;
+              return alliance.get() == DriverStation.Alliance.Red;
             }
             return false;
           },
@@ -166,7 +172,9 @@ public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
       // Handle exception as needed
       e.printStackTrace();
     }
+    
   }
+
   
  /**
    * Get the path follower with events.
@@ -255,5 +263,10 @@ public Command driveToPose(Pose2d pose)
   {
     return swerveDrive.getPose();
   }
+
+    public double getMaximumChassisAngularVelocity() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMaximumChassisAngularVelocity'");
+    }
 
 }

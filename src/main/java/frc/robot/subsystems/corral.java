@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -32,13 +33,16 @@ public class corral extends SubsystemBase {
         if (toplimitSwitch.get()) {
             thingy.set(0);  // Stop the motor
         } else {
-            thingy.set(.6);  // Run motor at 0.2 speed if no obstruction and within range
+            thingy.set(.5);  // Run motor at 0.2 speed if no obstruction and within range
         }
     }
   
     // Outtake function (motor runs at full speed)
     public void outtake() {
-        thingy.set(-.23);  // Run the motor at full speed
+        thingy.set(-.2);  // Run the motor at full speed
+    }
+    public void l2() {
+        thingy.set(-.1);  // Run the motor at full speed
     }
   
     // Stop the motor immediately
@@ -53,7 +57,14 @@ public class corral extends SubsystemBase {
   
     // Command for outtake (can be called by a button press or other event)
     public Command out() {
-        return this.run(() -> thingy.set(1));  // Full speed outtake
+        return this.run(() -> outtake());  // Full speed outtake
     }
+      public Command spitCoralOut(double speed)
+  {
+    return run(() -> {
+      thingy.set(-.3);
+    });
+  }
+  
   }
   

@@ -11,27 +11,36 @@ public class LED extends SubsystemBase {
     private final AddressableLED m_led;
     private final AddressableLEDBuffer m_ledBuffer;
 
-    {
-    m_led = new AddressableLED(8);
+public LED() {
     
+m_led = new AddressableLED(8);
     // Reuse buffer
     // Default to a length of 60, start empty output
     // Length is expensive to set, so only set it once, then just update data
     m_ledBuffer = new AddressableLEDBuffer(300);
     m_led.setLength(m_ledBuffer.getLength());
+    m_led.setData(m_ledBuffer);
+    m_led.start();
 
 }
 
 public void blue()
 {
+    
     LEDPattern blue =  LEDPattern.solid(Color.kBlue);
     blue.applyTo(m_ledBuffer);
     m_led.setData(m_ledBuffer);
 }
 public void red()
 {
+
     LEDPattern red =  LEDPattern.solid(Color.kGreen);
     red.applyTo(m_ledBuffer);
+    m_led.setData(m_ledBuffer);
+}
+public void shit()
+{
+    m_ledBuffer.setRGB(1, 255, 192, 203);
     m_led.setData(m_ledBuffer);
 }
 }

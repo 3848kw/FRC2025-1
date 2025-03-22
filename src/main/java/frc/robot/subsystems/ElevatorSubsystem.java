@@ -57,7 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase
     SparkMaxConfig config = new SparkMaxConfig();
     config.encoder
         .positionConversionFactor(1) // Converts Rotations to Meters
-        .velocityConversionFactor(100); // Converts RPM to MPS
+        .velocityConversionFactor(1); // Converts RPM to MPS
     config.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pid(.1, 0, .02)
@@ -144,6 +144,7 @@ public class ElevatorSubsystem extends SubsystemBase
         m_encoder.setPosition(0);  // Reset encoder position to 0
     }
 }
+  // Run the intake method with obstruction checking
 
   @Override
   public void periodic()

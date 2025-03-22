@@ -5,24 +5,33 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.climber;
+import frc.robot.subsystems.corral;
 import swervelib.SwerveInputStream;
+
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Rotation;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.climber;
-import frc.robot.subsystems.corral;
-import frc.robot.subsystems.ElevatorSubsystem;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -32,9 +41,10 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class RobotContainer {
 
  private SendableChooser<Command> autoChooser = new SendableChooser<>();
- private final climber climber = new climber();
-private final LED led = new LED();
- private final corral corral = new corral();
+ private final frc.robot.subsystems.climber climber = new climber();
+ private final corral corral = new frc.robot.subsystems.corral();
+ private final LED led = new LED();
+
  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
    // The robot's subsystems and commands are defined here...
@@ -51,11 +61,14 @@ private final LED led = new LED();
      DriverStation.silenceJoystickConnectionWarning(true);
      configureBindings();
      drivebase.setDefaultCommand(!RobotBase.isSimulation() ? driveFieldOrientedAngularVelocity : driveFieldOrientedDirectAngleSim);
-     NamedCommands.registerCommand("test", Commands.print("Hello World"));
-     NamedCommands.registerCommand("climb", climber.up());
-     NamedCommands.registerCommand("fall", climber.down());
-     NamedCommands.registerCommand("intake", corral.in());
-     NamedCommands.registerCommand("intake", corral.out());
+  
+     NamedCommands.registerCommand("erm", corral.spitCoralOut(.5));
+     NamedCommands.registerCommand("out", corral.spitCoralOut(-.3));
+     NamedCommands.registerCommand("hp", elevator.setGoal(49));
+     NamedCommands.registerCommand("l3", elevator.setGoal(95));
+     NamedCommands.registerCommand("l2", elevator.setGoal(13.6));
+     NamedCommands.registerCommand("l1", elevator.setGoal(0));
+
    autoChooser = AutoBuilder.buildAutoChooser();
 
 
@@ -118,19 +131,109 @@ private final LED led = new LED();
   
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    m_driverController.b().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    CommandJoystick.button(4).onTrue(Commands.runOnce(climber::climb));
-    CommandJoystick.button(3).onTrue(Commands.runOnce(climber::release));
-    CommandJoystick.button(2).whileTrue(elevator.setGoal(-20));
-    CommandJoystick.button(3).whileTrue(elevator.setGoal(-40));
-    CommandJoystick.button(6).whileTrue(elevator.setGoal(0));
-    
-    CommandJoystick.button(1).whileTrue(Commands.runOnce(elevator::homeElevator));
+  // Drivebase
+m_driverController.b().onTrue(Commands.runOnce(drivebase::zeroGyro));
+m_driverController.b().onTrue(Commands.runOnce(drivebase::zeroGyro));
+m_driverController.y().onTrue(Commands.runOnce(led::red));
+m_driverController.x().onTrue(Commands.runOnce(led::blue));
 
-    CommandJoystick.button(9).onFalse(Commands.runOnce(corral::stop));
-    CommandJoystick.button(2).onTrue(Commands.runOnce(() -> elevator.reachGoal(20)));  // Moves to 20 meters while button 2 is held
-     CommandJoystick.button(9).whileTrue(Commands.run(corral::intake));
-     CommandJoystick.button(8).whileTrue(Commands.runOnce(corral::outtake));
+
+// Climber Controls
+m_driverController.rightBumper().onTrue(Commands.runOnce(climber::climb));
+m_driverController.leftBumper().onTrue(Commands.runOnce(climber::release));
+
+// Elevator Controls
+CommandJoystick.button(2).whileTrue(elevator.setGoal(74)); 
+CommandJoystick.button(3).whileTrue(elevator.setGoal(0));   
+CommandJoystick.button(6).whileTrue(elevator.setGoal(28));     
+CommandJoystick.button(7).whileTrue(elevator.setGoal(8));     
+
+// Corral Controls
+CommandJoystick.button(4).whileTrue(Commands.run(corral::l2)); // Start intake when button 9 is held
+
+CommandJoystick.button(5).onFalse(Commands.runOnce(corral::stop)); // Stop corral when button 9 is released
+CommandJoystick.button(5).whileTrue(Commands.run(corral::intake)); // Start intake when button 9 is held
+CommandJoystick.button(1).whileTrue(Commands.runOnce(corral::outtake)); // Start outtake when button 8 is held
+
+m_driverController.y().whileTrue(//Human player reload station
+drivebase.driveToPose(
+new Pose2d(new Translation2d
+(Meter.of(1),
+Meter.of(7)),
+Rotation2d.fromDegrees(130)))
+.andThen(
+drivebase.driveToPose(//Coral side 1
+new Pose2d(new Translation2d
+(Meter.of(3.4),
+Meter.of(5.1)),
+Rotation2d.fromDegrees(-50)))
+).andThen(
+drivebase.driveToPose(//Human Player station
+new Pose2d(new Translation2d
+(Meter.of(1),
+ Meter.of(7)),
+Rotation2d.fromDegrees(130)))
+).andThen(
+drivebase.driveToPose(//Set point
+new Pose2d(new Translation2d
+(Meter.of(4.3),
+Meter.of(6.3)),
+Rotation2d.fromDegrees(-50)))
+).andThen(
+drivebase.driveToPose( //Coral 2
+new Pose2d(new Translation2d
+(Meter.of(5.2),
+Meter.of(5.2)),
+Rotation2d.fromDegrees(-120)))
+)
+
+);
+
+m_driverController.button(9).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(3),
+                                                                      Meter.of(4)),
+                                                                Rotation2d.fromDegrees(-180))));  
+                                                                                    
+m_driverController.button(8).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(5),
+                                                                      Meter.of(3)),
+                                                              Rotation2d.fromDegrees(0))));
+                                                              
+m_driverController.button(7).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                              (Meter.of(3.5),
+                                                              Meter.of(2.5)),
+                                                      Rotation2d.fromDegrees(125))));
+
+m_driverController.button(6).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(5),
+                                                                      Meter.of(3)),
+                                                              Rotation2d.fromDegrees(-50))));
+
+m_driverController.button(5).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                              (Meter.of(6.1),
+                                                              Meter.of(4)),
+                                                      Rotation2d.fromDegrees(125))));
+
+m_driverController.button(4).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(5.2),
+                                                                      Meter.of(5.2)),
+                                                              Rotation2d.fromDegrees(-120))));
+
+
+m_driverController.button(3).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(3.3),
+                                                                      Meter.of(5.3)),
+                                                              Rotation2d.fromDegrees(-50))));
+//Processor
+m_driverController.button(2).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(11.5),
+                                                                      Meter.of(7.5)),
+                                                              Rotation2d.fromDegrees(90))));  
+//Human Playerstation                                                                                
+m_driverController.button(1).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d
+                                                                      (Meter.of(1),
+                                                                      Meter.of(7)),
+                                                                Rotation2d.fromDegrees(130)))); 
 
 
 
