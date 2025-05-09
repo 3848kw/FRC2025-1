@@ -56,7 +56,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.studica.frc:Studica-java:2025.1.1-beta-3'
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
